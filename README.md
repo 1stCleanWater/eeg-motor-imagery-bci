@@ -65,12 +65,16 @@ Leave-One-Subject-Out(LOSO) 방식으로 한 명을 완전히 제외한 뒤 나�
 
 ### Nested CV vs LOSO
 
+![Nested CV vs LOSO](figures/nested_vs_loso.png)
+
 - Mean subject-specific Nested CV accuracy: **59.8%**
 - Mean LOSO accuracy: **54.4%**
 - 일부 피험자는 개인별 모델에서 높은 정확도를 보였지만, 새로운 피험자에 대한 일반화 성능은 크게 감소했습니다.
 - 예: Subject 7은 Nested CV에서 **93.3%**, LOSO에서는 **55.6%**를 기록했습니다.
 
 ### Calibration example — Subject 7
+
+![Calibration Curve](figures/calibration_curve.png)
 
 | Calibration trials | Accuracy |
 |---:|---:|
@@ -81,9 +85,14 @@ Leave-One-Subject-Out(LOSO) 방식으로 한 명을 완전히 제외한 뒤 나�
 
 Subject 7에서는 개인 데이터를 추가할수록 성능이 크게 향상되었습니다.
 
-### CSP spatial patterns
+> 전체 10명 평균에서는 calibration 데이터가 0 / 5 / 10 / 20 trials로 증가할 때 정확도가 각각 **54.4% / 54.6% / 57.8% / 59.2%**로 변화했습니다.
 
-CSP spatial pattern을 topomap으로 시각화해 좌/우 운동상상 분류에 사용되는 EEG 공간 패턴을 확인했습니다.
+### CSP Spatial Patterns
+
+![CSP Spatial Patterns](figures/csp_patterns.png)
+
+Subject 7의 CSP spatial pattern을 topomap으로 시각화했습니다.  
+CSP가 좌/우 운동상상 EEG를 구분하기 위해 사용하는 공간적 분산 패턴을 확인할 수 있습니다.
 
 ## Interpretation
 
