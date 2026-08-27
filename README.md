@@ -72,24 +72,29 @@ Leave-One-Subject-Out(LOSO) 방식으로 한 명을 완전히 제외한 뒤 나�
 2. 여러 피험자의 데이터로 학습한 모델이 새로운 피험자에게도 일반화되는가?
 3. 새로운 사용자의 소량 데이터를 추가하면 성능을 개선할 수 있는가?
 
-이를 위해 subject-specific Nested Cross-Validation, LOSO,
+이를 확인하기 위해 subject-specific Nested Cross-Validation, LOSO,
 그리고 personal calibration 실험을 순차적으로 비교했습니다.
 
 ## Results Summary
 
 | Evaluation | Mean Accuracy | Interpretation |
 |---|---:|---|
-| Subject-specific Nested CV | 59.8% | 개인별 모델의 성능 |
+| Subject-specific Nested CV | 59.8% | 개인별 모델의 분류 성능 |
 | LOSO | 54.4% | 새로운 피험자에 대한 일반화 성능 |
-| LOSO + 10 calibration trials | 57.8% | 소량의 개인 데이터로 성능 개선 |
-| LOSO + 20 calibration trials | 59.2% | 개인별 모델 수준에 가까운 평균 성능 |
+| LOSO + 5 calibration trials | 54.6% | 소량의 개인 데이터 추가 |
+| LOSO + 10 calibration trials | 57.8% | calibration 증가에 따른 평균 성능 개선 |
+| LOSO + 20 calibration trials | 59.2% | calibration 증가에 따른 평균 성능 개선 |
 
-Subject-specific 모델과 비교했을 때 새로운 피험자에 대한 LOSO 성능은 낮아졌습니다.
-하지만 새로운 사용자의 calibration 데이터를 추가하면 평균 정확도가 점진적으로 회복되었습니다.
+Subject-specific 모델에서는 평균 59.8%의 정확도를 보였지만,
+완전히 새로운 피험자를 대상으로 한 LOSO에서는 평균 54.4%로 성능이 낮아졌습니다.
 
-이는 EEG 기반 BCI에서 **피험자 간 차이(inter-subject variability)**가
-일반화 성능을 제한하는 중요한 요인이며,
-소량의 개인별 calibration이 이를 일부 보완할 수 있음을 보여줍니다.
+새로운 사용자의 calibration 데이터를 추가했을 때 평균 정확도는
+54.4%에서 최대 59.2%까지 향상되었습니다.
+다만 calibration 효과의 크기는 피험자마다 달랐습니다.
+
+이 결과는 EEG 기반 BCI에서 **피험자 간 차이(inter-subject variability)**가
+새로운 사용자에 대한 일반화 성능을 제한할 수 있으며,
+소량의 개인별 calibration 데이터가 이를 일부 보완할 가능성이 있음을 보여줍니다.
 
 ## Main Results
 
