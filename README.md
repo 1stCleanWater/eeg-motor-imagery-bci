@@ -63,6 +63,19 @@ Leave-One-Subject-Out(LOSO) 방식으로 한 명을 완전히 제외한 뒤 나�
 
 ## Main Results
 
+## Key Question
+
+운동상상 EEG 분류에서는 한 사람의 데이터에서 높은 성능을 얻는 것뿐 아니라,
+새로운 사용자에게도 모델이 일반화되는지가 중요합니다.
+
+이 프로젝트에서는 다음 세 가지 질문을 중심으로 분석했습니다.
+
+1. 개인별로 학습한 CSP + LDA 모델은 어느 정도의 분류 성능을 보이는가?
+2. 여러 피험자의 데이터로 학습한 모델이 새로운 피험자에게도 일반화되는가?
+3. 새로운 사용자의 소량 데이터를 추가하면 성능을 개선할 수 있는가?
+
+이를 위해 subject-specific Nested Cross-Validation, LOSO,
+그리고 personal calibration 실험을 순차적으로 비교했습니다.
 ### Nested CV vs LOSO
 
 ![Nested CV vs LOSO](figures/nested_vs_loso.png)
