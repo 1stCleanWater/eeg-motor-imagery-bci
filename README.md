@@ -61,8 +61,6 @@ Leave-One-Subject-Out(LOSO) 방식으로 한 명을 완전히 제외한 뒤 나�
 
 개인 calibration 데이터가 증가하면서 전체 평균 성능은 점진적으로 향상되었지만, 개선 폭에는 큰 개인차가 있었습니다.
 
-## Main Results
-
 ## Key Question
 
 운동상상 EEG 분류에서는 한 사람의 데이터에서 높은 성능을 얻는 것뿐 아니라,
@@ -76,6 +74,25 @@ Leave-One-Subject-Out(LOSO) 방식으로 한 명을 완전히 제외한 뒤 나�
 
 이를 위해 subject-specific Nested Cross-Validation, LOSO,
 그리고 personal calibration 실험을 순차적으로 비교했습니다.
+
+## Results Summary
+
+| Evaluation | Mean Accuracy | Interpretation |
+|---|---:|---|
+| Subject-specific Nested CV | 59.8% | 개인별 모델의 성능 |
+| LOSO | 54.4% | 새로운 피험자에 대한 일반화 성능 |
+| LOSO + 10 calibration trials | 57.8% | 소량의 개인 데이터로 성능 개선 |
+| LOSO + 20 calibration trials | 59.2% | 개인별 모델 수준에 가까운 평균 성능 |
+
+Subject-specific 모델과 비교했을 때 새로운 피험자에 대한 LOSO 성능은 낮아졌습니다.
+하지만 새로운 사용자의 calibration 데이터를 추가하면 평균 정확도가 점진적으로 회복되었습니다.
+
+이는 EEG 기반 BCI에서 **피험자 간 차이(inter-subject variability)**가
+일반화 성능을 제한하는 중요한 요인이며,
+소량의 개인별 calibration이 이를 일부 보완할 수 있음을 보여줍니다.
+
+## Main Results
+
 ### Nested CV vs LOSO
 
 ![Nested CV vs LOSO](figures/nested_vs_loso.png)
