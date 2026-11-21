@@ -1,7 +1,8 @@
 # EEG Motor Imagery BCI Classification
 
 왼손/오른손 운동상상(Motor Imagery) EEG를 분류하는 BCI 포트폴리오 프로젝트입니다.  
-PhysioNet EEG Motor Movement/Imagery Dataset(EEGBCI)을 사용해 전처리, CSP 특징 추출, LDA 분류, 개인별 평가, LOSO 평가, calibration 실험까지 진행했습니다.
+PhysioNet EEG Motor Movement/Imagery Dataset(EEGBCI)을 사용해 전처리, CSP 특징 추출, LDA 분류, 개인별 평가, LOSO 평가, calibration 실험까지 진행했습니다.  
+같은 조건에서 PyTorch로 구현한 EEGNet과도 비교했습니다.
 
 ## 프로젝트 목표
 
@@ -126,6 +127,25 @@ Subject 7에서는 개인 데이터를 추가할수록 분류 성능이 크게 �
 
 이는 calibration 효과가 모든 피험자에게 동일하지 않으며, 특정 피험자에서는 개인 데이터가 모델 적응에 크게 기여할 수 있음을 보여주는 사례입니다.
 
+### EEGNet vs CSP + LDA
+
+![EEGNet vs CSP+LDA](figures/eegnet_vs_csp.png)
+
+CSP + LDA와 **같은 데이터, 같은 전처리(8–30 Hz, 0–3초), 같은 5-fold 분할**로 EEGNet-8,2를 학습해 비교했습니다.  
+신경망은 초기값에 따라 결과가 달라지므로 seed 3개의 평균을 사용했습니다.
+
+| Model | 개인별 5-fold CV | LOSO |
+|---|---:|---:|
+| CSP + LDA (0–3초, CSP 4개 고정) | 56.9% | 54.4% |
+| EEGNet | 61.2% | 49.3% |
+
+- 개인별 CV에서는 EEGNet 평균이 조금 높았지만, 피험자마다 더 나은 모델이 달랐습니다. (예: Subject 2는 EEGNet 83.7% vs CSP + LDA 55.6%, Subject 7은 77.0% vs 95.6%)
+- LOSO에서는 EEGNet도 평균 49.3%로 우연 수준에 머물렀고, 개인 CV에서 77.0%였던 Subject 7도 45.9%로 떨어졌습니다.
+- 즉 처음 보는 피험자에 대한 일반화 문제는 **분류 모델을 바꾸는 것만으로 해결되지 않았습니다.**
+- 45 trial 기준 우연 수준을 넘으려면(이항검정, p < 0.05) 약 64.4% 이상이 필요합니다. 이 기준을 넘은 피험자는 개인 CV에서 EEGNet 3명, CSP + LDA 2명이었고, LOSO에서는 EEGNet 0명이었습니다.
+
+Subject 1 한 명으로 처음 구현한 EEGNet 베이스라인은 `notebooks/eegnet_baseline_subject1.ipynb`에 있습니다. (학습 36 / 테스트 9 trial, 1회 분할)
+
 ### CSP Spatial Patterns
 
 ![CSP Spatial Patterns](figures/csp_patterns.png)
@@ -139,18 +159,20 @@ CSP는 두 클래스의 분산 차이를 크게 만드는 공간 필터를 학�
 이번 프로젝트에서 확인한 핵심 내용은 다음과 같습니다.
 
 - 운동상상 EEG 분류 성능은 피험자에 따라 크게 달랐습니다.
-- 한 피험자에게 효과적인 모델 설정이 다른 피험자에게 동일하게 적용되지는 않았습니다.
-- 개인별 모델과 비교했을 때 새로운 피험자를 대상으로 한 subject-independent 분류 성능은 낮았습니다.
-- 소량의 개인 calibration 데이터를 추가하면 평균 분류 성능이 향상되었습니다.
-- Calibration 효과의 크기 역시 피험자별로 차이가 있었습니다.
+- ? ????? ???? ?? ??? ?? ????? ???? ????? ?????.
+- ??? ??? ???? ? ??? ???? ???? ? subject-independent ?? ??? ?????.
+- ??? ?? calibration ???? ?? ??? ?????, ??? ????? ?????.
+- EEGNet?? ??? ???? LOSO ??? ?? ??????, ????? ??? ??? ?????.
 
-따라서 운동상상 EEG 기반 BCI에서는 단순히 개인별 분류 정확도를 높이는 것뿐 아니라 **새로운 사용자에 대한 일반화와 효율적인 개인 적응(calibration)**이 중요한 문제임을 확인했습니다.
+??? ???? EEG ?? BCI??? **??? ???? ?? ???? ???? ?? ??(calibration)**? ??? ??? ???????.
 
 ## Limitations
 
 - 피험자당 trial 수가 45개로 적습니다.
 - 분석 대상은 Subject 1–10으로 제한했습니다.
-- CSP + LDA 기반의 비교적 단순한 분류 모델을 사용했습니다.
+- CSP + LDA와 기본 구조의 EEGNet만 비교했으며, 하이퍼파라미터 튜닝은 하지 않았습니다.
+- EEGNet 개인별 CV는 학습 trial이 36개뿐이라 검증셋 없이 고정 epoch(200)로 학습했습니다.
+- EEGNet LOSO의 early stopping 검증셋은 학습 피험자 9명의 trial을 섞어 무작위로 나눴습니다. 피험자 단위로 검증셋을 나누면 새로운 피험자에 대한 일반화를 더 잘 반영할 수 있습니다.
 - Calibration 데이터가 증가할수록 평가에 남는 개인 test trial 수가 감소합니다.
 - Calibration 조건별 test set 크기가 동일하지 않으므로 결과를 직접적으로 동일 조건의 성능 비교로 해석하는 데 한계가 있습니다.
 - 본 프로젝트는 포트폴리오용 탐색적 분석이며 임상적 성능을 주장하지 않습니다.
@@ -163,11 +185,16 @@ eeg-motor-imagery-bci/
 ├── requirements.txt
 ├── .gitignore
 ├── notebooks/
-│   └── bci_analysis.ipynb
+│   ├── bci_analysis.ipynb               # CSP + LDA, Nested CV, LOSO, calibration
+│   ├── eegnet_baseline_subject1.ipynb   # EEGNet 첫 구현 (Subject 1)
+│   └── eegnet_analysis.ipynb            # EEGNet 10명 확장, CSP + LDA와 비교
+├── results/
+│   └── eegnet_results.csv
 └── figures/
     ├── nested_vs_loso.png
     ├── calibration_curve.png
-    └── csp_patterns.png
+    ├── csp_patterns.png
+    └── eegnet_vs_csp.png
 ```
 
 ## Environment
@@ -176,6 +203,7 @@ Main packages:
 
 - Python 3.13
 - MNE-Python 1.12.1
+- PyTorch 2.6.0 (CUDA 12.4, RTX 4060)
 - NumPy
 - SciPy
 - scikit-learn
@@ -187,6 +215,8 @@ Install dependencies:
 
 ```bash
 pip install -r requirements.txt
+# GPU로 EEGNet을 학습하려면 CUDA 버전 PyTorch 설치
+pip install torch --index-url https://download.pytorch.org/whl/cu124
 ```
 
 ## Run
@@ -199,6 +229,7 @@ Open:
 
 ```text
 notebooks/bci_analysis.ipynb
+notebooks/eegnet_analysis.ipynb
 ```
 
 EEGBCI data is expected at:
@@ -215,5 +246,6 @@ If using another path, change `DATA_PATH` in the notebook.
 - Frequency-band comparison
 - Channel-selection experiments
 - Improved calibration strategy
-- EEGNet or other deep-learning baselines
+- Subject-wise validation split for EEGNet LOSO
+- Resting-state EEG features vs cross-subject performance
 - Cross-session / cross-subject generalization analysis
